@@ -1,55 +1,5 @@
 import 'package:flutter/material.dart';
-//
-//class ListViewScreen extends StatelessWidget {
-//  final List<String> titleList = <String>[' Title 1', 'Title 2', 'Title 3'];
-//  // List of titles for entries which will be used in ListView widgets
-//  final List<int> colorCodes = <int>[600, 400, 200];
-//  // List of bla-bla-bla
-//
-//  @override
-//  Widget build(BuildContext context) {
-//    return Scaffold(
-//      appBar: AppBar(
-//        // Here we take the value from the MyHomePage object that was created by
-//        // the App.build method, and use it to set our appbar title.
-//        title: Text('ListView Demo'),
-//      ),
-//      body: Center(
-//        child: Text('123'),
-//      ), // This trailing comma makes auto-formatting nicer for build methods.
-//      bottomNavigationBar: BottomNavigationBar(
-//        items: const <BottomNavigationBarItem>[
-//          BottomNavigationBarItem(
-//            icon: Icon(Icons.home),
-//            label: '1',
-//          ),
-//          BottomNavigationBarItem(
-//            icon: Icon(Icons.home),
-//            label: '2',
-//          ),
-//          BottomNavigationBarItem(
-//            icon: Icon(Icons.home),
-//            label: '3',
-//          ),
-//        ],
-//        currentIndex: 0,
-//        onTap: (index) {},
-//      ),
-//    );
-//  }
-//}
 
-/// Flutter code sample for BottomNavigationBar
-
-// This example shows a [BottomNavigationBar] as it is used within a [Scaffold]
-// widget. The [BottomNavigationBar] has three [BottomNavigationBarItem]
-// widgets, which means it defaults to [BottomNavigationBarType.fixed], and
-// the [currentIndex] is set to index 0. The selected item is
-// amber. The `_onItemTapped` function changes the selected item's index
-// and displays a corresponding message in the center of the [Scaffold].
-
-
-/// This is the stateful widget that the main application instantiates.
 class ListViewScreen extends StatefulWidget {
   const ListViewScreen({Key? key}) : super(key: key);
 
@@ -57,40 +7,27 @@ class ListViewScreen extends StatefulWidget {
   State<ListViewScreen> createState() => _ListViewScreenState();
 }
 
-/// This is the private State class that goes with MyStatefulWidget.
+/// Private State class that goes with [ListViewScreen]
 class _ListViewScreenState extends State<ListViewScreen> {
-  static Widget text() {
-    return Text(
-      'Index 0: Home',
-      style: optionStyle,
-    );
-  }
-  static Widget text2() {
-    return ListView.builder(
-      itemCount: 10,
-      itemBuilder: (_, __) => const Text('Foo'),
-      );
-  }
-  static Widget text3() {
-    return Text(
-      'Index 2: Home',
-      style: optionStyle,
-    );
-  }
-  int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static final List<Function> _widgetOptions = <Function>[
-    text,
-    text2,
-    text3,
+  /// List of titles for entries which will be used in [ListView] widgets
+  static final List<String> titleList = <String>[
+    'Title 1',
+    'Title 2',
+    'Title 3'
   ];
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  /// List of color codes for Container Colors in [ListView] builders
+  static final List<int> colorCodes = <int>[600, 400, 200];
+
+  /// List of functions what changes widgets on clicking buttons in [BottomNavigationBar]
+  static final List<Function> _widgetOptions = <Function>[
+    listViewBuilder,
+    listViewBuilderBuilder,
+    listViewSeparatedBuilder,
+  ];
+
+  /// Value of currently showing element from [_widgetOptions] for body of [Scaffold]
+  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -105,21 +42,67 @@ class _ListViewScreenState extends State<ListViewScreen> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: 'Home',
+            label: 'ListView',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.business),
-            label: 'Business',
+            icon: Icon(Icons.home),
+            label: 'ListView.builder',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.school),
-            label: 'School',
+            icon: Icon(Icons.home),
+            label: 'ListView.separated',
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
-        onTap: _onItemTapped,
+        selectedItemColor: Colors.blue[800],
+        onTap: (index) => setState(() {
+          _selectedIndex = index;
+        }),
       ),
+    );
+  }
+
+  /// Variant of widget that uses [ListView] constructor
+  static Widget listViewBuilder() {
+    return ListView(
+      padding: const EdgeInsets.all(10),
+      children: <Widget>[
+        for (var i = 0; i < titleList.length; i++)
+          Container(
+              width: 600,
+              color: Colors.blue[colorCodes[i]],
+              child: Center(child: Text('${titleList[i]}'))),
+      ],
+      scrollDirection: Axis.horizontal,
+    );
+  }
+
+  /// Variant of widget that uses [ListView.builder] constructor
+  static Widget listViewBuilderBuilder() {
+    return ListView.builder(
+      padding: const EdgeInsets.all(10),
+      itemCount: titleList.length,
+      itemBuilder: (_, int index) {
+        return Container(
+            height: 300,
+            color: Colors.blue[colorCodes[index]],
+            child: Center(child: Text('${titleList[index]}')));
+      },
+    );
+  }
+
+  /// Variant of widget that uses [ListView.separated] constructor
+  static Widget listViewSeparatedBuilder() {
+    return ListView.separated(
+      padding: const EdgeInsets.all(10),
+      itemCount: titleList.length,
+      itemBuilder: (_, int index) {
+        return Container(
+            height: 300,
+            color: Colors.blue[colorCodes[index]],
+            child: Center(child: Text('${titleList[index]}')));
+      },
+      separatorBuilder: (_, __) => const Divider(),
     );
   }
 }
