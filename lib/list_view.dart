@@ -33,7 +33,7 @@ class _ListViewScreenState extends State<ListViewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('BottomNavigationBar Sample'),
+        title: const Text('ListView Demo'),
       ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex).call(),
