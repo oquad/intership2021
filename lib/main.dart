@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'list_view.dart';
+import 'material_widgets.dart';
 
 void main() {
   runApp(MyApp());
@@ -51,7 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
             clickableListTile(
                 name: 'ListView', screen: (_) => ListViewScreen()),
             clickableListTile(
-                name: 'TO BE IMPLEMENTED', screen: (_) => ListViewScreen()),
+                name: 'Material Widgets', screen: (_) => MaterialWidgetScreen()),
             clickableListTile(
                 name: 'TO BE IMPLEMENTED', screen: (_) => ListViewScreen()),
             clickableListTile(
@@ -71,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(name),
         onTap: () {
           Navigator.of(context)
-              .push(MaterialPageRoute(builder: (_) => ListViewScreen()));
+              .push(MaterialPageRoute(builder: screen));
         });
   }
 }
