@@ -7,6 +7,15 @@ class MaterialWidgetScreen extends StatefulWidget {
   State<MaterialWidgetScreen> createState() => _MaterialWidgetScreenState();
 }
 
+var _answer = "А конь ли ты?";
+
+enum PopupButtonOptions{
+    yes,
+    yesSure,
+    no,
+    noSure
+  }
+
 class _MaterialWidgetScreenState extends State<MaterialWidgetScreen> {
   final List<String> entryList = <String>[
     'New Group',
@@ -52,8 +61,29 @@ class _MaterialWidgetScreenState extends State<MaterialWidgetScreen> {
     "themeSwitcher" : Color(0xFFFAFEFD),
   };
 
+  final Map<PopupButtonOptions, String> betweenButtonsText = {
+    PopupButtonOptions.yes : "Я конь",
+    PopupButtonOptions.yesSure : "Я точно конь",
+    PopupButtonOptions.no : "Я не конь",
+    PopupButtonOptions.noSure : "Я точно не конь",
+  };
+
   var _darkThemeUsing = true;
-  
+
+  final List<Function> _pageOptions = <Function>[
+    smallTalkAboutHorses,
+    dataTableExample,
+    cardsExample,
+    tapBarExample,
+    checkboxExample,
+    dateTimePickerExapmle,
+    defaultBody,
+    radioExample,
+    sliderSwitchExample,
+  ];
+
+  int _selectedIndex = 6;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,8 +98,32 @@ class _MaterialWidgetScreenState extends State<MaterialWidgetScreen> {
             icon: const Icon(Icons.airline_seat_flat),
             onPressed: () {
               ScaffoldMessenger.of(context)
-                .showSnackBar(const SnackBar(content: Text('Ты пидор')));
+                .showSnackBar(const SnackBar(content: Text('Ты конь')));
             },
+          ),
+          PopupMenuButton<PopupButtonOptions>(
+            tooltip: "А конь ли ты?",
+            onSelected: (PopupButtonOptions result) {
+              setState(() {  _answer = betweenButtonsText[result].toString(); });
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<PopupButtonOptions>>[
+              const PopupMenuItem<PopupButtonOptions>(
+                value: PopupButtonOptions.yes,
+                child: Text('Я конь')
+              ),
+              const PopupMenuItem<PopupButtonOptions>(
+                value: PopupButtonOptions.yesSure,
+                child: Text('Я точно конь')
+              ),
+              const PopupMenuItem<PopupButtonOptions>(
+                value: PopupButtonOptions.no,
+                child: Text('Я не конь')
+              ),
+              const PopupMenuItem<PopupButtonOptions>(
+                value: PopupButtonOptions.noSure,
+                child: Text('Я точно не конь')
+              ),
+            ]
           ),
           DrawerButtonWidget(),
         ],
@@ -82,6 +136,7 @@ class _MaterialWidgetScreenState extends State<MaterialWidgetScreen> {
               DrawerHeader(
                 padding: EdgeInsets.all(0),
                 decoration: BoxDecoration(color: _darkThemeUsing ? colorMap["drawerHeader"] : colorMapLight["drawerHeader"]),
+                duration: Duration(milliseconds: 0),
                 child: Container(
                   padding: EdgeInsets.all(15),
                   child: Column(
@@ -89,9 +144,16 @@ class _MaterialWidgetScreenState extends State<MaterialWidgetScreen> {
                     children: <Widget>[
                       Row(
                         children: <Widget>[
-                          Text(
-                            'Photo',
-                            style: TextStyle(color: _darkThemeUsing ? colorMap["nickname"] : colorMapLight["nickname"]),
+                          CircleAvatar(
+                            backgroundColor: _darkThemeUsing ? colorMap["drawerBackground"] : colorMapLight["drawerBackground"],
+                            radius: 35,
+                            child: Text(
+                              "AB",
+                              style: TextStyle(
+                                color: _darkThemeUsing ? colorMap["nickname"] : colorMapLight["nickname"],
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                           Expanded(
                             child: Text(''),
@@ -160,6 +222,12 @@ class _MaterialWidgetScreenState extends State<MaterialWidgetScreen> {
                         fontWeight: FontWeight.bold
                       ),
                     ),
+                    onTap: () {
+                      setState(() {
+                        _selectedIndex = i;
+                      });
+                      Navigator.pop(context);
+                    },
                   )
                 else
                   Divider(),
@@ -179,11 +247,7 @@ class _MaterialWidgetScreenState extends State<MaterialWidgetScreen> {
         tooltip: 'Саня',
       ),
       body: Center(
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20)),
-          child: const Text('Нажми меня'),
-          onPressed: () {},
-        ),
+        child: _pageOptions.elementAt(_selectedIndex)(context),
       ),
     );
   }
@@ -199,4 +263,101 @@ class DrawerButtonWidget extends StatelessWidget {
       },
     );
   }
+}
+
+Widget smallTalkAboutHorses(context) {
+  return Center(
+    child: Column(
+      children: <Widget>[
+        Expanded(
+          child: Text(''),
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20)),
+          child: const Text('Нажми меня'),
+          onPressed: () => showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text('Вопрос к тебе есть'),
+              content: Text('Ты конь?'),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('Да'),
+                  onPressed: () => Navigator.pop(context, 'Да'),
+                ),
+                TextButton(
+                  child: Text('Осуждаю'),
+                  onPressed: () => Navigator.pop(context, 'Осуждаю'),
+                ),
+              ],
+            ),
+          ),
+        ),
+        Container(
+          height: 40,
+          child: Text(''),
+        ),
+        Text(_answer),
+        Container(
+          height: 40,
+          child: Text(''),
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20)),
+          child: const Text('И меня тоже'),
+          onPressed: () => showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => SimpleDialog(
+              title: const Text('Ты всё ещё конь?'),
+              children: <Widget>[
+                TextButton(
+                  child: Text('Всё ещё конь'),
+                  onPressed: () => Navigator.pop(context, 'Всё ещё конь'),
+                ),
+                TextButton(
+                  child: Text('Всё ещё осуждаю'),
+                  onPressed: () => Navigator.pop(context, 'Всё ещё осуждаю'),
+                ),
+              ],
+            ),
+          ),
+        ),
+        Expanded(
+          child: Text(''),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget dataTableExample(context) {
+  return Text('Здесь будет таблица');
+}
+
+Widget cardsExample(context) {
+  return Text('Здесь будут карточки (возможно с грид вью (или нет))');
+}
+
+Widget tapBarExample(context) {
+  return Text('Здесь будет тапбар');
+}
+
+Widget checkboxExample(context) {
+  return Text('Здесь будут чекбоксы');
+}
+
+Widget dateTimePickerExapmle(context) {
+  return Text('Здесь будет выбор даты и времени');
+}
+
+Widget defaultBody(context) {
+  return Text('Потяни от правого края или ткни на кнопку чтоб было по кайфу');
+}
+
+Widget radioExample(context) {
+  return Text('Здесь будет радио');
+}
+
+Widget sliderSwitchExample(context) {
+  return Text('Здесь будут слайдеры и свичи');
 }
