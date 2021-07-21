@@ -82,6 +82,7 @@ class _MaterialWidgetScreenState extends State<MaterialWidgetScreen> {
               DrawerHeader(
                 padding: EdgeInsets.all(0),
                 decoration: BoxDecoration(color: _darkThemeUsing ? colorMap["drawerHeader"] : colorMapLight["drawerHeader"]),
+                duration: Duration(milliseconds: 0),
                 child: Container(
                   padding: EdgeInsets.all(15),
                   child: Column(
