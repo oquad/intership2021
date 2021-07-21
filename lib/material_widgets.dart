@@ -10,22 +10,32 @@ class MaterialWidgetScreen extends StatefulWidget {
 var _answer = "А конь ли ты?";
 
 enum PopupButtonOptions{
-    yes,
-    yesSure,
-    no,
-    noSure
-  }
+  yes,
+  yesSure,
+  no,
+  noSure
+}
+
+enum RadioOptions{
+  Monday,
+  Tuesday,
+  Wednesday,
+  Thursday,
+  Friday,
+  Saturday,
+  Sunday,
+}
 
 class _MaterialWidgetScreenState extends State<MaterialWidgetScreen> {
   final List<String> entryList = <String>[
-    'New Group',
+    'Разговоры о конях',
     'Contacts',
     'Calls',
     'People Nearby',
     'Saved Messages',
     'Settings',
     'Unused',
-    'Invite Friends',
+    'Радио',
     'Telegram Features',
   ];
   
@@ -242,7 +252,7 @@ class _MaterialWidgetScreenState extends State<MaterialWidgetScreen> {
         ),
         onPressed: () {
           ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text('Хуй саси')));
+              .showSnackBar(const SnackBar(content: Text('Да не эту блять')));
         },
         tooltip: 'Саня',
       ),
@@ -354,8 +364,50 @@ Widget defaultBody(context) {
   return Text('Потяни от правого края или ткни на кнопку чтоб было по кайфу');
 }
 
-Widget radioExample(context) {
-  return Text('Здесь будет радио');
+class RadioWidget extends StatefulWidget {
+  RadioWidget({Key? key}) : super(key: key);
+
+  @override
+  _RadioWidgetState createState() => _RadioWidgetState();
+}
+
+class _RadioWidgetState extends State<RadioWidget> {
+  RadioOptions? _day = RadioOptions.Monday;
+  
+  final List<String> dayTranslation = [
+    "Понедельник",
+    "Вторник",
+    "Среда",
+    "Четверг",
+    "Пятница",
+    "Суббота",
+    "Воскресение",
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        for (var i = 0; i < dayTranslation.length; i++)
+          ListTile(
+            title: Text(dayTranslation[i]),
+            leading: Radio<RadioOptions>(
+              value: RadioOptions.values[i],
+              groupValue: _day,
+              onChanged: (RadioOptions? value) {
+                setState(() {
+                  _day = value;
+                });
+              },
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+Widget radioExample(context){
+  return RadioWidget();
 }
 
 Widget sliderSwitchExample(context) {
