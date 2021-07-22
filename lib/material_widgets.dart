@@ -35,30 +35,6 @@ enum RadioOptions {
 }
 
 class _MaterialWidgetScreenState extends State<MaterialWidgetScreen> {
-  final List<String> entryList = <String>[
-    'Разговоры о конях',
-    'Contacts',
-    'Calls',
-    'People Nearby',
-    'Saved Messages',
-    'Settings',
-    'Unused',
-    'Радио',
-    'Telegram Features',
-  ];
-
-  final List<IconData> iconList = <IconData>[
-    Icons.group_outlined,
-    Icons.person_outline,
-    Icons.call_outlined,
-    Icons.person_outline,
-    Icons.bookmark_outline,
-    Icons.settings_outlined,
-    Icons.help,
-    Icons.person_add_outlined,
-    Icons.help_outline,
-  ];
-
   final Map<String, Color> colorMap = {
     "drawerHeader": Color(0xFF233040),
     "drawerBackground": Color(0xFF1C242F),
@@ -82,24 +58,20 @@ class _MaterialWidgetScreenState extends State<MaterialWidgetScreen> {
   /// TODO use [Theme] to change appearance
   var _darkThemeUsing = true;
 
-  int _selectedIndex = 6;
-
-  // TODO move to another widget
-  var _answer = "А конь ли ты?";
+  int selectedIndex = 6;
 
   @override
   Widget build(BuildContext context) {
-
     final List<Widget> pageOptions = <Widget>[
-      smallTalkAboutHorses(context),
-      dataTableExample(context),
-      cardsExample(context),
-      tapBarExample(context),
-      checkboxExample(context),
-      dateTimePickerExapmle(context),
-      defaultBody(context),
+      SmallTalkAboutHorses(),
+      DataTableWidget(),
+      CardsWidget(),
+      TapBarWidget(),
+      CheckboxWidget(),
+      DateTimeWidget(),
+      DefaultWidget(),
       RadioWidget(),
-      sliderSwitchExample(context),
+      SliderSwitch(),
     ];
 
     return Scaffold(
@@ -109,29 +81,7 @@ class _MaterialWidgetScreenState extends State<MaterialWidgetScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: const Text('Material widgets demo'),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.airline_seat_flat),
-            onPressed: () {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(const SnackBar(content: Text('Ты конь')));
-            },
-          ),
-          PopupMenuButton<PopupButtonOptions>(
-              tooltip: "А конь ли ты?",
-              onSelected: (PopupButtonOptions result) {
-                setState(() {
-                  _answer = result.toText();
-                });
-              },
-              itemBuilder: (BuildContext context) =>
-                  <PopupMenuEntry<PopupButtonOptions>>[
-                    for (final enumValue in PopupButtonOptions.values)
-                      PopupMenuItem<PopupButtonOptions>(
-                          value: enumValue, child: Text(enumValue.toText())),
-                  ]),
-          DrawerButtonWidget(),
-        ],
+        actions: [AppBarActions()],
       ),
       endDrawer: Drawer(
         child: Container(
@@ -178,11 +128,8 @@ class _MaterialWidgetScreenState extends State<MaterialWidgetScreen> {
                                 ? colorMap["themeSwitcher"]
                                 : colorMapLight["themeSwitcher"],
                           ),
-                          onPressed: () {
-                            setState(() {
-                              _darkThemeUsing = _darkThemeUsing ? false : true;
-                            });
-                          },
+                          onPressed: () => setState(() =>
+                              _darkThemeUsing = _darkThemeUsing ? false : true),
                         ),
                       ],
                     ),
@@ -230,32 +177,7 @@ class _MaterialWidgetScreenState extends State<MaterialWidgetScreen> {
                 ),
               ),
             ),
-            for (var i = 0; i < entryList.length; i++)
-              if (i != 6)
-                ListTile(
-                  leading: Icon(
-                    iconList[i],
-                    color: _darkThemeUsing
-                        ? colorMap["entryLeading"]
-                        : colorMapLight["entryLeading"],
-                  ),
-                  title: Text(
-                    entryList[i],
-                    style: TextStyle(
-                        color: _darkThemeUsing
-                            ? colorMap["entryTitle"]
-                            : colorMapLight["entryTitle"],
-                        fontWeight: FontWeight.bold),
-                  ),
-                  onTap: () {
-                    setState(() {
-                      _selectedIndex = i;
-                    });
-                    Navigator.pop(context);
-                  },
-                )
-              else
-                Divider(),
+            DrawerList(),
           ]),
         ),
       ),
@@ -271,113 +193,284 @@ class _MaterialWidgetScreenState extends State<MaterialWidgetScreen> {
         tooltip: 'Саня',
       ),
       body: Center(
-        child: pageOptions.elementAt(_selectedIndex),
+        child: pageOptions.elementAt(selectedIndex),
       ),
     );
   }
 }
 
-class DrawerButtonWidget extends StatelessWidget {
+class DrawerList extends StatefulWidget {
+  DrawerList({Key? key}) : super(key: key);
+
+  @override
+  _DrawerListState createState() => _DrawerListState();
+}
+
+class _DrawerListState extends State<DrawerList> {
+  final List<String> entryList = <String>[
+    'Разговоры о конях',
+    'Contacts',
+    'Calls',
+    'People Nearby',
+    'Saved Messages',
+    'Settings',
+    'Unused',
+    'Радио',
+    'Telegram Features',
+  ];
+
+  final List<IconData> iconList = <IconData>[
+    Icons.group_outlined,
+    Icons.person_outline,
+    Icons.call_outlined,
+    Icons.person_outline,
+    Icons.bookmark_outline,
+    Icons.settings_outlined,
+    Icons.help,
+    Icons.person_add_outlined,
+    Icons.help_outline,
+  ];
+
+  final Map<String, IconData> entryAndIconList = {
+    'Разговоры о конях': Icons.group_outlined,
+    'Contacts': Icons.person_outline,
+    'Calls': Icons.call_outlined,
+    'People Nearby': Icons.person_outline,
+    'Saved Messages': Icons.bookmark_outline,
+    'Settings': Icons.settings_outlined,
+    'Unused': Icons.help,
+    'Радио': Icons.person_add_outlined,
+    'Telegram Features': Icons.help_outline,
+  };
+
+  /// TODO define [TextStyle] correctly (including Boldness)
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      icon: const Icon(Icons.toc),
-      onPressed: () {
-        Scaffold.of(context).openEndDrawer();
-      },
+    return Column(children: <Widget>[
+      for (var i = 0; i < entryAndIconList.keys.length; i++)
+        if (entryAndIconList.keys.elementAt(i) != 'Unused')
+          ListTile(
+              leading: Icon(entryAndIconList.values.elementAt(i)),
+              title: Text(entryAndIconList.keys.elementAt(i)),
+              onTap: () => setState(() => selectedIndex = i))
+        else
+          Divider(),
+    ]);
+  }
+}
+
+class AppBarActions extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        IconButton(
+          icon: const Icon(Icons.airline_seat_flat),
+          onPressed: () {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text('Ты конь')));
+          },
+        ),
+        PopupMenuButton<PopupButtonOptions>(
+            tooltip: "А конь ли ты?",
+            onSelected: (_) {},
+            itemBuilder: (BuildContext context) =>
+                <PopupMenuEntry<PopupButtonOptions>>[
+                  for (final enumValue in PopupButtonOptions.values)
+                    PopupMenuItem<PopupButtonOptions>(
+                        value: enumValue, child: Text(enumValue.toText())),
+                ]),
+        IconButton(
+          icon: const Icon(Icons.toc),
+          onPressed: () {
+            Scaffold.of(context).openEndDrawer();
+          },
+        ),
+      ],
     );
   }
 }
 
-Widget smallTalkAboutHorses(context) {
-  return Center(
-    child: Column(
-      children: <Widget>[
-        Expanded(
-          child: Text(''),
-        ),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-              textStyle: const TextStyle(fontSize: 20)),
-          child: const Text('Нажми меня'),
-          onPressed: () => showDialog<String>(
-            context: context,
-            builder: (BuildContext context) => AlertDialog(
-              title: const Text('Вопрос к тебе есть'),
-              content: Text('Ты конь?'),
-              actions: <Widget>[
-                TextButton(
-                  child: Text('Да'),
-                  onPressed: () => Navigator.pop(context, 'Да'),
-                ),
-                TextButton(
-                  child: Text('Осуждаю'),
-                  onPressed: () => Navigator.pop(context, 'Осуждаю'),
-                ),
-              ],
-            ),
+class SmallTalkAboutHorses extends StatefulWidget {
+  SmallTalkAboutHorses({Key? key}) : super(key: key);
+
+  @override
+  _SmallTalkAboutHorsesState createState() => _SmallTalkAboutHorsesState();
+}
+
+class _SmallTalkAboutHorsesState extends State<SmallTalkAboutHorses> {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        children: <Widget>[
+          Expanded(
+            child: Text(''),
           ),
-        ),
-        Container(
-          height: 40,
-          child: Text(''),
-        ),
-        Text(_answer),
-        Container(
-          height: 40,
-          child: Text(''),
-        ),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-              textStyle: const TextStyle(fontSize: 20)),
-          child: const Text('И меня тоже'),
-          onPressed: () => showDialog<String>(
-            context: context,
-            builder: (BuildContext context) => SimpleDialog(
-              title: const Text('Ты всё ещё конь?'),
-              children: <Widget>[
-                TextButton(
-                  child: Text('Всё ещё конь'),
-                  onPressed: () => Navigator.pop(context, 'Всё ещё конь'),
-                ),
-                TextButton(
-                  child: Text('Всё ещё осуждаю'),
-                  onPressed: () => Navigator.pop(context, 'Всё ещё осуждаю'),
-                ),
-              ],
-            ),
+          HorseButton1(),
+          Container(
+            height: 40,
+            child: Text(''),
           ),
+          HorseButton2(),
+          Expanded(
+            child: Text(''),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class HorseButton1 extends StatefulWidget {
+  HorseButton1({Key? key}) : super(key: key);
+
+  @override
+  _HorseButton1State createState() => _HorseButton1State();
+}
+
+class _HorseButton1State extends State<HorseButton1> {
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20)),
+      child: const Text('Нажми меня'),
+      onPressed: () => showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Вопрос к тебе есть'),
+          content: Text('Ты конь?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Да'),
+              onPressed: () => Navigator.pop(context, 'Да'),
+            ),
+            TextButton(
+              child: Text('Осуждаю'),
+              onPressed: () => Navigator.pop(context, 'Осуждаю'),
+            ),
+          ],
         ),
-        Expanded(
-          child: Text(''),
+      ),
+    );
+  }
+}
+
+class HorseButton2 extends StatefulWidget {
+  HorseButton2({Key? key}) : super(key: key);
+
+  @override
+  _HorseButton2State createState() => _HorseButton2State();
+}
+
+class _HorseButton2State extends State<HorseButton2> {
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20)),
+      child: const Text('И меня тоже'),
+      onPressed: () => showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => SimpleDialog(
+          title: const Text('Ты всё ещё конь?'),
+          children: <Widget>[
+            TextButton(
+              child: Text('Всё ещё конь'),
+              onPressed: () => Navigator.pop(context, 'Всё ещё конь'),
+            ),
+            TextButton(
+              child: Text('Всё ещё осуждаю'),
+              onPressed: () => Navigator.pop(context, 'Всё ещё осуждаю'),
+            ),
+          ],
         ),
-      ],
-    ),
-  );
+      ),
+    );
+  }
 }
 
-Widget dataTableExample(context) {
-  return Text('Здесь будет таблица');
+class DataTableWidget extends StatefulWidget {
+  DataTableWidget({Key? key}) : super(key: key);
+
+  @override
+  _DataTableWidgetState createState() => _DataTableWidgetState();
 }
 
-Widget cardsExample(context) {
-  return Text('Здесь будут карточки (возможно с грид вью (или нет))');
+class _DataTableWidgetState extends State<DataTableWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Text('Здесь будет таблица');
+  }
 }
 
-Widget tapBarExample(context) {
-  return Text('Здесь будет тапбар');
+class CardsWidget extends StatefulWidget {
+  CardsWidget({Key? key}) : super(key: key);
+
+  @override
+  _CardsWidgetState createState() => _CardsWidgetState();
 }
 
-Widget checkboxExample(context) {
-  return Text('Здесь будут чекбоксы');
+class _CardsWidgetState extends State<CardsWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Text('Здесь будут карточки');
+  }
 }
 
-Widget dateTimePickerExapmle(context) {
-  return Text('Здесь будет выбор даты и времени');
+class TapBarWidget extends StatefulWidget {
+  TapBarWidget({Key? key}) : super(key: key);
+
+  @override
+  _TapBarWidgetState createState() => _TapBarWidgetState();
 }
 
-Widget defaultBody(context) {
-  return Text('Потяни от правого края или ткни на кнопку чтоб было по кайфу');
+class _TapBarWidgetState extends State<TapBarWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Text('Здесь будет тапбар');
+  }
+}
+
+class CheckboxWidget extends StatefulWidget {
+  CheckboxWidget({Key? key}) : super(key: key);
+
+  @override
+  _CheckboxWidgetState createState() => _CheckboxWidgetState();
+}
+
+class _CheckboxWidgetState extends State<CheckboxWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Text('Здесь будут чекбоксы');
+  }
+}
+
+class DateTimeWidget extends StatefulWidget {
+  DateTimeWidget({Key? key}) : super(key: key);
+
+  @override
+  _DateTimeWidgetState createState() => _DateTimeWidgetState();
+}
+
+class _DateTimeWidgetState extends State<DateTimeWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Text('Здесь будет выбор даты и времени');
+  }
+}
+
+class DefaultWidget extends StatefulWidget {
+  DefaultWidget({Key? key}) : super(key: key);
+
+  @override
+  _DefaultWidgetState createState() => _DefaultWidgetState();
+}
+
+class _DefaultWidgetState extends State<DefaultWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Text('Потяни от правого края или ткни на кнопку чтоб было по кайфу');
+  }
 }
 
 class RadioWidget extends StatefulWidget {
@@ -414,11 +507,8 @@ class _RadioWidgetState extends State<RadioWidget> {
                 leading: Radio<RadioOptions>(
                   value: RadioOptions.values[i],
                   groupValue: _day,
-                  onChanged: (RadioOptions? value) {
-                    setState(() {
-                      _day = value;
-                    });
-                  },
+                  onChanged: (RadioOptions? value) =>
+                      setState(() => _day = value),
                 ),
               ),
           ],
@@ -426,10 +516,16 @@ class _RadioWidgetState extends State<RadioWidget> {
   }
 }
 
-Widget radioExample(context) {
-  return RadioWidget();
+class SliderSwitch extends StatefulWidget {
+  SliderSwitch({Key? key}) : super(key: key);
+
+  @override
+  _SliderSwitchState createState() => _SliderSwitchState();
 }
 
-Widget sliderSwitchExample(context) {
-  return Text('Здесь будут слайдеры и свичи');
+class _SliderSwitchState extends State<SliderSwitch> {
+  @override
+  Widget build(BuildContext context) {
+    return Text('Здесь будут слайдеры и свичи');
+  }
 }
