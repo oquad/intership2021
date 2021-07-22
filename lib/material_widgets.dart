@@ -7,16 +7,24 @@ class MaterialWidgetScreen extends StatefulWidget {
   State<MaterialWidgetScreen> createState() => _MaterialWidgetScreenState();
 }
 
-var _answer = "А конь ли ты?";
+enum PopupButtonOptions { yes, yesSure, no, noSure }
 
-enum PopupButtonOptions{
-  yes,
-  yesSure,
-  no,
-  noSure
+extension PoputToString on PopupButtonOptions {
+  String toText() {
+    switch (this) {
+      case PopupButtonOptions.yes:
+        return 'Я конь';
+      case PopupButtonOptions.yesSure:
+        return 'Я точно конь';
+      case PopupButtonOptions.no:
+        return 'Я не конь';
+      case PopupButtonOptions.noSure:
+        return 'Я точно не конь';
+    }
+  }
 }
 
-enum RadioOptions{
+enum RadioOptions {
   Monday,
   Tuesday,
   Wednesday,
@@ -38,7 +46,7 @@ class _MaterialWidgetScreenState extends State<MaterialWidgetScreen> {
     'Радио',
     'Telegram Features',
   ];
-  
+
   final List<IconData> iconList = <IconData>[
     Icons.group_outlined,
     Icons.person_outline,
@@ -52,41 +60,36 @@ class _MaterialWidgetScreenState extends State<MaterialWidgetScreen> {
   ];
 
   final Map<String, Color> colorMap = {
-    "drawerHeader" : Color(0xFF233040),
-    "drawerBackground" : Color(0xFF1C242F),
-    "entryTitle" : Color(0xFFECF0F1),
-    "entryLeading" : Color(0xFF727E8A),
-    "nickname" : Color(0xFFFEFEFE),
-    "phone" : Color(0xFF717D8B),
-    "themeSwitcher" : Color(0xFFFFFFFF),
+    "drawerHeader": Color(0xFF233040),
+    "drawerBackground": Color(0xFF1C242F),
+    "entryTitle": Color(0xFFECF0F1),
+    "entryLeading": Color(0xFF727E8A),
+    "nickname": Color(0xFFFEFEFE),
+    "phone": Color(0xFF717D8B),
+    "themeSwitcher": Color(0xFFFFFFFF),
   };
 
   final Map<String, Color> colorMapLight = {
-    "drawerHeader" : Color(0xFF5A8FBB),
-    "drawerBackground" : Color(0xFFFFFFFF),
-    "entryTitle" : Color(0xFF454545),
-    "entryLeading" : Color(0xFFAAB0B3),
-    "nickname" : Color(0xFFF4FCFD),
-    "phone" : Color(0xFFABD2EF),
-    "themeSwitcher" : Color(0xFFFAFEFD),
+    "drawerHeader": Color(0xFF5A8FBB),
+    "drawerBackground": Color(0xFFFFFFFF),
+    "entryTitle": Color(0xFF454545),
+    "entryLeading": Color(0xFFAAB0B3),
+    "nickname": Color(0xFFF4FCFD),
+    "phone": Color(0xFFABD2EF),
+    "themeSwitcher": Color(0xFFFAFEFD),
   };
 
-  final Map<PopupButtonOptions, String> betweenButtonsText = {
-    PopupButtonOptions.yes : "Я конь",
-    PopupButtonOptions.yesSure : "Я точно конь",
-    PopupButtonOptions.no : "Я не конь",
-    PopupButtonOptions.noSure : "Я точно не конь",
-  };
-
+  /// TODO use [Theme] to change appearance
   var _darkThemeUsing = true;
-
-  
 
   int _selectedIndex = 6;
 
+  // TODO move to another widget
+  var _answer = "А конь ли ты?";
+
   @override
   Widget build(BuildContext context) {
-    
+
     final List<Widget> pageOptions = <Widget>[
       smallTalkAboutHorses(context),
       dataTableExample(context),
@@ -111,141 +114,149 @@ class _MaterialWidgetScreenState extends State<MaterialWidgetScreen> {
             icon: const Icon(Icons.airline_seat_flat),
             onPressed: () {
               ScaffoldMessenger.of(context)
-                .showSnackBar(const SnackBar(content: Text('Ты конь')));
+                  .showSnackBar(const SnackBar(content: Text('Ты конь')));
             },
           ),
           PopupMenuButton<PopupButtonOptions>(
-            tooltip: "А конь ли ты?",
-            onSelected: (PopupButtonOptions result) {
-              setState(() {  _answer = betweenButtonsText[result].toString(); });
-            },
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<PopupButtonOptions>>[
-              const PopupMenuItem<PopupButtonOptions>(
-                value: PopupButtonOptions.yes,
-                child: Text('Я конь')
-              ),
-              const PopupMenuItem<PopupButtonOptions>(
-                value: PopupButtonOptions.yesSure,
-                child: Text('Я точно конь')
-              ),
-              const PopupMenuItem<PopupButtonOptions>(
-                value: PopupButtonOptions.no,
-                child: Text('Я не конь')
-              ),
-              const PopupMenuItem<PopupButtonOptions>(
-                value: PopupButtonOptions.noSure,
-                child: Text('Я точно не конь')
-              ),
-            ]
-          ),
+              tooltip: "А конь ли ты?",
+              onSelected: (PopupButtonOptions result) {
+                setState(() {
+                  _answer = result.toText();
+                });
+              },
+              itemBuilder: (BuildContext context) =>
+                  <PopupMenuEntry<PopupButtonOptions>>[
+                    for (final enumValue in PopupButtonOptions.values)
+                      PopupMenuItem<PopupButtonOptions>(
+                          value: enumValue, child: Text(enumValue.toText())),
+                  ]),
           DrawerButtonWidget(),
         ],
       ),
       endDrawer: Drawer(
         child: Container(
-          color: _darkThemeUsing ? colorMap["drawerBackground"] : colorMapLight["drawerBackground"],
-          child: ListView(
-            children: <Widget>[
-              DrawerHeader(
-                padding: EdgeInsets.all(0),
-                decoration: BoxDecoration(color: _darkThemeUsing ? colorMap["drawerHeader"] : colorMapLight["drawerHeader"]),
-                duration: Duration(milliseconds: 0),
-                child: Container(
-                  padding: EdgeInsets.all(15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          CircleAvatar(
-                            backgroundColor: _darkThemeUsing ? colorMap["drawerBackground"] : colorMapLight["drawerBackground"],
-                            radius: 35,
-                            child: Text(
-                              "AB",
+          color: _darkThemeUsing
+              ? colorMap["drawerBackground"]
+              : colorMapLight["drawerBackground"],
+          child: ListView(children: <Widget>[
+            DrawerHeader(
+              padding: EdgeInsets.all(0),
+              decoration: BoxDecoration(
+                  color: _darkThemeUsing
+                      ? colorMap["drawerHeader"]
+                      : colorMapLight["drawerHeader"]),
+              duration: Duration(milliseconds: 0),
+              child: Container(
+                padding: EdgeInsets.all(15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        CircleAvatar(
+                          backgroundColor: _darkThemeUsing
+                              ? colorMap["drawerBackground"]
+                              : colorMapLight["drawerBackground"],
+                          radius: 35,
+                          child: Text(
+                            "AB",
+                            style: TextStyle(
+                              color: _darkThemeUsing
+                                  ? colorMap["nickname"]
+                                  : colorMapLight["nickname"],
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(''),
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            Icons.light_mode,
+                            color: _darkThemeUsing
+                                ? colorMap["themeSwitcher"]
+                                : colorMapLight["themeSwitcher"],
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _darkThemeUsing = _darkThemeUsing ? false : true;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    Expanded(
+                      child: Text(''),
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              'Alexey Bukin',
                               style: TextStyle(
-                                color: _darkThemeUsing ? colorMap["nickname"] : colorMapLight["nickname"],
+                                color: _darkThemeUsing
+                                    ? colorMap["nickname"]
+                                    : colorMapLight["nickname"],
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ),
-                          Expanded(
-                            child: Text(''),
-                          ),
-                          IconButton(
-                            icon: Icon(
-                              Icons.light_mode,
-                              color: _darkThemeUsing ? colorMap["themeSwitcher"] : colorMapLight["themeSwitcher"],
+                            Text(
+                              '+7 (920) 008-12-76',
+                              style: TextStyle(
+                                  color: _darkThemeUsing
+                                      ? colorMap["phone"]
+                                      : colorMapLight["phone"]),
                             ),
-                            onPressed: () {
-                              setState(() {
-                                _darkThemeUsing = _darkThemeUsing ? false : true;
-                              });
-                              },
+                          ],
+                        ),
+                        Expanded(
+                          child: Text(''),
+                        ),
+                        IconButton(
+                          icon: Icon(
+                            Icons.keyboard_arrow_down_outlined,
+                            color: _darkThemeUsing
+                                ? colorMap["themeSwitcher"]
+                                : colorMapLight["themeSwitcher"],
                           ),
-                        ],
-                      ),
-                      Expanded(
-                        child: Text(''),
-                      ),
-                      Row(
-                        children: <Widget>[
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                'Alexey Bukin',
-                                style: TextStyle(
-                                  color: _darkThemeUsing ? colorMap["nickname"] : colorMapLight["nickname"],
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                '+7 (920) 008-12-76',
-                                style: TextStyle(color: _darkThemeUsing ? colorMap["phone"] : colorMapLight["phone"]),
-                              ),
-                            ],
-                          ),
-                          Expanded(
-                            child: Text(''),
-                          ),
-                          IconButton(
-                            icon: Icon(
-                              Icons.keyboard_arrow_down_outlined,
-                              color: _darkThemeUsing ? colorMap["themeSwitcher"] : colorMapLight["themeSwitcher"],
-                            ),
-                            onPressed: () {},
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),  
+                          onPressed: () {},
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              for (var i = 0; i < entryList.length; i++)
-                if (i != 6)
-                  ListTile(
-                    leading: Icon(
-                      iconList[i],
-                      color: _darkThemeUsing ? colorMap["entryLeading"] : colorMapLight["entryLeading"],
-                    ),
-                    title: Text(
-                      entryList[i],
-                      style: TextStyle(
-                        color: _darkThemeUsing ? colorMap["entryTitle"] : colorMapLight["entryTitle"],
-                        fontWeight: FontWeight.bold
-                      ),
-                    ),
-                    onTap: () {
-                      setState(() {
-                        _selectedIndex = i;
-                      });
-                      Navigator.pop(context);
-                    },
-                  )
-                else
-                  Divider(),
-            ]
-          ),
+            ),
+            for (var i = 0; i < entryList.length; i++)
+              if (i != 6)
+                ListTile(
+                  leading: Icon(
+                    iconList[i],
+                    color: _darkThemeUsing
+                        ? colorMap["entryLeading"]
+                        : colorMapLight["entryLeading"],
+                  ),
+                  title: Text(
+                    entryList[i],
+                    style: TextStyle(
+                        color: _darkThemeUsing
+                            ? colorMap["entryTitle"]
+                            : colorMapLight["entryTitle"],
+                        fontWeight: FontWeight.bold),
+                  ),
+                  onTap: () {
+                    setState(() {
+                      _selectedIndex = i;
+                    });
+                    Navigator.pop(context);
+                  },
+                )
+              else
+                Divider(),
+          ]),
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -286,7 +297,8 @@ Widget smallTalkAboutHorses(context) {
           child: Text(''),
         ),
         ElevatedButton(
-          style: ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20)),
+          style: ElevatedButton.styleFrom(
+              textStyle: const TextStyle(fontSize: 20)),
           child: const Text('Нажми меня'),
           onPressed: () => showDialog<String>(
             context: context,
@@ -316,7 +328,8 @@ Widget smallTalkAboutHorses(context) {
           child: Text(''),
         ),
         ElevatedButton(
-          style: ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20)),
+          style: ElevatedButton.styleFrom(
+              textStyle: const TextStyle(fontSize: 20)),
           child: const Text('И меня тоже'),
           onPressed: () => showDialog<String>(
             context: context,
@@ -376,7 +389,7 @@ class RadioWidget extends StatefulWidget {
 
 class _RadioWidgetState extends State<RadioWidget> {
   RadioOptions? _day = RadioOptions.Monday;
-  
+
   final List<String> dayTranslation = [
     "Понедельник",
     "Вторник",
@@ -390,31 +403,30 @@ class _RadioWidgetState extends State<RadioWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 200,
-      height: 500,
-      child: Column(
-        children: <Widget>[
-          for (var i = 0; i < dayTranslation.length; i++)
-            ListTile(
-              title: Text(dayTranslation[i]),
-              visualDensity: VisualDensity.compact,
-              leading: Radio<RadioOptions>(
-                value: RadioOptions.values[i],
-                groupValue: _day,
-                onChanged: (RadioOptions? value) {
-                  setState(() {
-                    _day = value;
-                  });
-                },
+        width: 200,
+        height: 500,
+        child: Column(
+          children: <Widget>[
+            for (var i = 0; i < dayTranslation.length; i++)
+              ListTile(
+                title: Text(dayTranslation[i]),
+                visualDensity: VisualDensity.compact,
+                leading: Radio<RadioOptions>(
+                  value: RadioOptions.values[i],
+                  groupValue: _day,
+                  onChanged: (RadioOptions? value) {
+                    setState(() {
+                      _day = value;
+                    });
+                  },
+                ),
               ),
-            ),
-        ],
-      )
-    );
+          ],
+        ));
   }
 }
 
-Widget radioExample(context){
+Widget radioExample(context) {
   return RadioWidget();
 }
 
