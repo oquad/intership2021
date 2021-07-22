@@ -1,23 +1,19 @@
 import 'package:flutter/material.dart';
 
 class SmallTalkAboutHorses extends StatelessWidget {
+  final ButtonStyle _horseButtonsStyle =
+      ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20));
+
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Column(
         children: <Widget>[
-          Expanded(
-            child: Text(''),
-          ),
+          Spacer(flex: 4),
           horseButton1(context),
-          Container(
-            height: 40,
-            child: Text(''),
-          ),
+          Spacer(),
           horseButton2(context),
-          Expanded(
-            child: Text(''),
-          ),
+          Spacer(flex: 4),
         ],
       ),
     );
@@ -25,32 +21,31 @@ class SmallTalkAboutHorses extends StatelessWidget {
 
   Widget horseButton1(context) {
     return ElevatedButton(
-      style: ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20)),
-      child: const Text('Нажми меня'),
-      onPressed: () => showDialog<String>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text('Вопрос к тебе есть'),
-          content: Text('Ты конь?'),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Да'),
-              onPressed: () => Navigator.pop(context, 'Да'),
-            ),
-            TextButton(
-              child: Text('Осуждаю'),
-              onPressed: () => Navigator.pop(context, 'Осуждаю'),
-            ),
-          ],
-        ),
-      ).then((result) => ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(result ?? ':('))))
-    );
+        style: _horseButtonsStyle,
+        child: const Text('Нажми меня'),
+        onPressed: () => showDialog<String>(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                title: const Text('Вопрос к тебе есть'),
+                content: Text('Ты конь?'),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('Да'),
+                    onPressed: () => Navigator.pop(context, 'Да'),
+                  ),
+                  TextButton(
+                    child: Text('Осуждаю'),
+                    onPressed: () => Navigator.pop(context, 'Осуждаю'),
+                  ),
+                ],
+              ),
+            ).then((result) => ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(result ?? ':(')))));
   }
 
   Widget horseButton2(context) {
     return ElevatedButton(
-      style: ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20)),
+      style: _horseButtonsStyle,
       child: const Text('И меня тоже'),
       onPressed: () => showDialog<String>(
         context: context,

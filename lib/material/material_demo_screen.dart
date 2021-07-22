@@ -10,9 +10,14 @@ class MaterialWidgetScreen extends StatefulWidget {
   State<MaterialWidgetScreen> createState() => _MaterialWidgetScreenState();
 }
 
-enum PopupButtonOptions { yes, yesSure, no, noSure }
+enum PopupButtonOptions {
+  yes,
+  yesSure,
+  no,
+  noSure,
+}
 
-extension PoputToString on PopupButtonOptions {
+extension PopupToString on PopupButtonOptions {
   String toText() {
     switch (this) {
       case PopupButtonOptions.yes:
@@ -37,30 +42,29 @@ enum RadioOptions {
   Sunday,
 }
 
+extension RadioToString on RadioOptions {
+  String toText() {
+    switch (this) {
+      case RadioOptions.Monday:
+        return 'Понедельник';
+      case RadioOptions.Tuesday:
+        return 'Вторник';
+      case RadioOptions.Wednesday:
+        return 'Среда';
+      case RadioOptions.Thursday:
+        return 'Щитверг';
+      case RadioOptions.Friday:
+        return 'Пятницца';
+      case RadioOptions.Saturday:
+        return 'Суббота';
+      case RadioOptions.Sunday:
+        return 'Христос воскресе';
+    }
+  }
+}
+
 class _MaterialWidgetScreenState extends State<MaterialWidgetScreen> {
-  final Map<String, Color> colorMap = {
-    "drawerHeader": Color(0xFF233040),
-    "drawerBackground": Color(0xFF1C242F),
-    "entryTitle": Color(0xFFECF0F1),
-    "entryLeading": Color(0xFF727E8A),
-    "nickname": Color(0xFFFEFEFE),
-    "phone": Color(0xFF717D8B),
-    "themeSwitcher": Color(0xFFFFFFFF),
-  };
-
-  final Map<String, Color> colorMapLight = {
-    "drawerHeader": Color(0xFF5A8FBB),
-    "drawerBackground": Color(0xFFFFFFFF),
-    "entryTitle": Color(0xFF454545),
-    "entryLeading": Color(0xFFAAB0B3),
-    "nickname": Color(0xFFF4FCFD),
-    "phone": Color(0xFFABD2EF),
-    "themeSwitcher": Color(0xFFFAFEFD),
-  };
-
   /// TODO use [Theme] to change appearance
-  var _darkThemeUsing = true;
-
   Widget _currentScreen = SmallTalkAboutHorses();
 
   @override
@@ -74,144 +78,80 @@ class _MaterialWidgetScreenState extends State<MaterialWidgetScreen> {
         title: const Text('Material widgets demo'),
         actions: [AppBarActions()],
       ),
-      endDrawer: Drawer(
-        child: Container(
-          color: _darkThemeUsing
-              ? colorMap["drawerBackground"]
-              : colorMapLight["drawerBackground"],
-          child: ListView(children: <Widget>[
-            DrawerHeader(
-              padding: EdgeInsets.all(0),
-              decoration: BoxDecoration(
-                  color: _darkThemeUsing
-                      ? colorMap["drawerHeader"]
-                      : colorMapLight["drawerHeader"]),
-              duration: Duration(milliseconds: 0),
-              child: Container(
-                padding: EdgeInsets.all(15),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        CircleAvatar(
-                          backgroundColor: _darkThemeUsing
-                              ? colorMap["drawerBackground"]
-                              : colorMapLight["drawerBackground"],
-                          radius: 35,
-                          child: Text(
-                            "AB",
-                            style: TextStyle(
-                              color: _darkThemeUsing
-                                  ? colorMap["nickname"]
-                                  : colorMapLight["nickname"],
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Text(''),
-                        ),
-                        IconButton(
-                          icon: Icon(
-                            Icons.light_mode,
-                            color: _darkThemeUsing
-                                ? colorMap["themeSwitcher"]
-                                : colorMapLight["themeSwitcher"],
-                          ),
-                          onPressed: () => setState(() =>
-                              _darkThemeUsing = _darkThemeUsing ? false : true),
-                        ),
-                      ],
-                    ),
-                    Expanded(
-                      child: Text(''),
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              'Alexey Bukin',
-                              style: TextStyle(
-                                color: _darkThemeUsing
-                                    ? colorMap["nickname"]
-                                    : colorMapLight["nickname"],
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              '+7 (920) 008-12-76',
-                              style: TextStyle(
-                                  color: _darkThemeUsing
-                                      ? colorMap["phone"]
-                                      : colorMapLight["phone"]),
-                            ),
-                          ],
-                        ),
-                        Expanded(
-                          child: Text(''),
-                        ),
-                        IconButton(
-                          icon: Icon(
-                            Icons.keyboard_arrow_down_outlined,
-                            color: _darkThemeUsing
-                                ? colorMap["themeSwitcher"]
-                                : colorMapLight["themeSwitcher"],
-                          ),
-                          onPressed: () {},
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            drawerList(),
-          ]),
-        ),
-      ),
+      endDrawer: drawerWidget(),
       floatingActionButton: FloatingActionButton(
-        child: Icon(
-          Icons.help,
-          size: 55,
-        ),
+        child: Icon(Icons.help, size: 55),
         onPressed: () {
           ScaffoldMessenger.of(context)
               .showSnackBar(const SnackBar(content: Text('Да не эту блять')));
         },
         tooltip: 'Саня',
       ),
-      body: Center(
-        child: _currentScreen,
-      ),
+      body: Center(child: _currentScreen),
     );
   }
 
-  // final Map<String, IconData> entryAndIconList = {
-  //   'Разговоры о конях': Icons.group_outlined,
-  //   'Contacts': Icons.person_outline,
-  //   'Calls': Icons.call_outlined,
-  //   'People Nearby': Icons.person_outline,
-  //   'Saved Messages': Icons.bookmark_outline,
-  //   'Settings': Icons.settings_outlined,
-  //   'Unused': Icons.help,
-  //   'Радио': Icons.person_add_outlined,
-  //   'Telegram Features': Icons.help_outline,
-  // };
+  /// TODO colors
+  Widget drawerWidget() {
+    return Drawer(
+      child: ListView(children: <Widget>[
+        DrawerHeader(
+          padding: EdgeInsets.all(0),
+          duration: Duration(milliseconds: 0),
+          child: Container(
+            padding: EdgeInsets.all(15),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                drawerHeaderTopLine(),
+                drawerHeaderBottomLine(),
+              ],
+            ),
+          ),
+        ),
+        drawerList(),
+      ]),
+    );
+  }
 
-  //    final List<Widget> pageOptions = <Widget>[
-  //       SmallTalkAboutHorses(),
-  //       DataTableWidget(),
-  //       CardsWidget(),
-  //       TapBarWidget(),
-  //       CheckboxWidget(),
-  //       DateTimeWidget(),
-  //       DefaultWidget(),
-  //       RadioWidget(),
-  //       SliderSwitch(),
-  //     ];
+  /// TODO define styles correctly
+  /// TODO define ThemeChangerFunction
+  Widget drawerHeaderTopLine() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        CircleAvatar(
+          radius: 35,
+          child: Text("AB"),
+        ),
+        IconButton(
+          icon: Icon(Icons.light_mode),
+          onPressed: () {},
+        ),
+      ],
+    );
+  }
+
+  /// TODO define styles correctly
+  Widget drawerHeaderBottomLine() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text('Alexey Bukin'),
+            Text('+7 (920) 008-12-76'),
+          ],
+        ),
+        IconButton(
+          icon: Icon(Icons.keyboard_arrow_down_outlined),
+          onPressed: () {},
+        ),
+      ],
+    );
+  }
 
   static final titledIcons = [
     TitledIcon(
@@ -220,14 +160,39 @@ class _MaterialWidgetScreenState extends State<MaterialWidgetScreen> {
       builder: () => SmallTalkAboutHorses(),
     ),
     TitledIcon(
-      title: 'DataTableWidget',
+      title: 'Таблица',
       icon: Icons.person_outline,
       builder: () => DataTableWidget(),
     ),
     TitledIcon(
-      title: 'CardsWidget',
+      title: 'Карточки',
       icon: Icons.call_outlined,
       builder: () => CardsWidget(),
+    ),
+    TitledIcon(
+      title: 'Тапбар',
+      icon: Icons.person_outline,
+      builder: () => TapBarWidget(),
+    ),
+    TitledIcon(
+      title: 'Чекбоксы',
+      icon: Icons.bookmark_outline,
+      builder: () => CheckboxWidget(),
+    ),
+    TitledIcon(
+      title: 'Дата и время',
+      icon: Icons.settings_outlined,
+      builder: () => DateTimeWidget(),
+    ),
+    TitledIcon(
+      title: 'Радио',
+      icon: Icons.person_add_outlined,
+      builder: () => RadioWidget(),
+    ),
+    TitledIcon(
+      title: 'Слайдеры и свичи',
+      icon: Icons.help_outline,
+      builder: () => SliderSwitch(),
     ),
   ];
 
@@ -235,16 +200,15 @@ class _MaterialWidgetScreenState extends State<MaterialWidgetScreen> {
       item: item,
       callback: () => setState(() {
             _currentScreen = item.builder.call();
+            Navigator.pop(context);
           }));
 
   Widget drawerList() {
     return Column(
       children: [
-        for (final item in titledIcons.take(2))
-          drawerItem(item),
+        for (final item in titledIcons.take(6)) drawerItem(item),
         Divider(),
-        for (final item in titledIcons.skip(2))
-          drawerItem(item),
+        for (final item in titledIcons.skip(6)) drawerItem(item),
       ],
     );
   }
@@ -259,7 +223,7 @@ class AppBarActions extends StatelessWidget {
           icon: const Icon(Icons.airline_seat_flat),
           onPressed: () {
             ScaffoldMessenger.of(context)
-                .showSnackBar(const SnackBar(content: Text('Ты конь')));
+                .showSnackBar(const SnackBar(content: Text('Ты пидор')));
           },
         ),
         PopupMenuButton<PopupButtonOptions>(
@@ -374,17 +338,8 @@ class RadioWidget extends StatefulWidget {
 }
 
 class _RadioWidgetState extends State<RadioWidget> {
-  RadioOptions? _day = RadioOptions.Monday;
-
-  final List<String> dayTranslation = [
-    "Понедельник",
-    "Вторник",
-    "Среда",
-    "Четверг",
-    "Пятница",
-    "Суббота",
-    "Воскресение",
-  ];
+  static const RadioOptions _default = RadioOptions.Monday;
+  RadioOptions _day = _default;
 
   @override
   Widget build(BuildContext context) {
@@ -393,15 +348,14 @@ class _RadioWidgetState extends State<RadioWidget> {
         height: 500,
         child: Column(
           children: <Widget>[
-            for (var i = 0; i < dayTranslation.length; i++)
+            for (var i = 0; i < RadioOptions.values.length; i++)
               ListTile(
-                title: Text(dayTranslation[i]),
-                visualDensity: VisualDensity.compact,
+                title: Text(RadioOptions.values[i].toText()),
                 leading: Radio<RadioOptions>(
                   value: RadioOptions.values[i],
                   groupValue: _day,
                   onChanged: (RadioOptions? value) =>
-                      setState(() => _day = value),
+                      setState(() => _day = value ?? _default),
                 ),
               ),
           ],
