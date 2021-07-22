@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'nested_screens.dart';
+import 'widgets.dart';
+
 class MaterialWidgetScreen extends StatefulWidget {
   const MaterialWidgetScreen({Key? key}) : super(key: key);
 
@@ -58,22 +61,10 @@ class _MaterialWidgetScreenState extends State<MaterialWidgetScreen> {
   /// TODO use [Theme] to change appearance
   var _darkThemeUsing = true;
 
-  int selectedIndex = 6;
+  Widget _currentScreen = SmallTalkAboutHorses();
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> pageOptions = <Widget>[
-      SmallTalkAboutHorses(),
-      DataTableWidget(),
-      CardsWidget(),
-      TapBarWidget(),
-      CheckboxWidget(),
-      DateTimeWidget(),
-      DefaultWidget(),
-      RadioWidget(),
-      SliderSwitch(),
-    ];
-
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -177,7 +168,7 @@ class _MaterialWidgetScreenState extends State<MaterialWidgetScreen> {
                 ),
               ),
             ),
-            DrawerList(),
+            drawerList(),
           ]),
         ),
       ),
@@ -193,69 +184,69 @@ class _MaterialWidgetScreenState extends State<MaterialWidgetScreen> {
         tooltip: 'Саня',
       ),
       body: Center(
-        child: pageOptions.elementAt(selectedIndex),
+        child: _currentScreen,
       ),
     );
   }
-}
 
-class DrawerList extends StatefulWidget {
-  DrawerList({Key? key}) : super(key: key);
+  // final Map<String, IconData> entryAndIconList = {
+  //   'Разговоры о конях': Icons.group_outlined,
+  //   'Contacts': Icons.person_outline,
+  //   'Calls': Icons.call_outlined,
+  //   'People Nearby': Icons.person_outline,
+  //   'Saved Messages': Icons.bookmark_outline,
+  //   'Settings': Icons.settings_outlined,
+  //   'Unused': Icons.help,
+  //   'Радио': Icons.person_add_outlined,
+  //   'Telegram Features': Icons.help_outline,
+  // };
 
-  @override
-  _DrawerListState createState() => _DrawerListState();
-}
+  //    final List<Widget> pageOptions = <Widget>[
+  //       SmallTalkAboutHorses(),
+  //       DataTableWidget(),
+  //       CardsWidget(),
+  //       TapBarWidget(),
+  //       CheckboxWidget(),
+  //       DateTimeWidget(),
+  //       DefaultWidget(),
+  //       RadioWidget(),
+  //       SliderSwitch(),
+  //     ];
 
-class _DrawerListState extends State<DrawerList> {
-  final List<String> entryList = <String>[
-    'Разговоры о конях',
-    'Contacts',
-    'Calls',
-    'People Nearby',
-    'Saved Messages',
-    'Settings',
-    'Unused',
-    'Радио',
-    'Telegram Features',
+  static final titledIcons = [
+    TitledIcon(
+      title: 'Разговоры о конях',
+      icon: Icons.group_outlined,
+      builder: () => SmallTalkAboutHorses(),
+    ),
+    TitledIcon(
+      title: 'DataTableWidget',
+      icon: Icons.person_outline,
+      builder: () => DataTableWidget(),
+    ),
+    TitledIcon(
+      title: 'CardsWidget',
+      icon: Icons.call_outlined,
+      builder: () => CardsWidget(),
+    ),
   ];
 
-  final List<IconData> iconList = <IconData>[
-    Icons.group_outlined,
-    Icons.person_outline,
-    Icons.call_outlined,
-    Icons.person_outline,
-    Icons.bookmark_outline,
-    Icons.settings_outlined,
-    Icons.help,
-    Icons.person_add_outlined,
-    Icons.help_outline,
-  ];
+  Widget drawerItem(item) => DrawerItem(
+      item: item,
+      callback: () => setState(() {
+            _currentScreen = item.builder.call();
+          }));
 
-  final Map<String, IconData> entryAndIconList = {
-    'Разговоры о конях': Icons.group_outlined,
-    'Contacts': Icons.person_outline,
-    'Calls': Icons.call_outlined,
-    'People Nearby': Icons.person_outline,
-    'Saved Messages': Icons.bookmark_outline,
-    'Settings': Icons.settings_outlined,
-    'Unused': Icons.help,
-    'Радио': Icons.person_add_outlined,
-    'Telegram Features': Icons.help_outline,
-  };
-
-  /// TODO define [TextStyle] correctly (including Boldness)
-  @override
-  Widget build(BuildContext context) {
-    return Column(children: <Widget>[
-      for (var i = 0; i < entryAndIconList.keys.length; i++)
-        if (entryAndIconList.keys.elementAt(i) != 'Unused')
-          ListTile(
-              leading: Icon(entryAndIconList.values.elementAt(i)),
-              title: Text(entryAndIconList.keys.elementAt(i)),
-              onTap: () => setState(() => selectedIndex = i))
-        else
-          Divider(),
-    ]);
+  Widget drawerList() {
+    return Column(
+      children: [
+        for (final item in titledIcons.take(2))
+          drawerItem(item),
+        Divider(),
+        for (final item in titledIcons.skip(2))
+          drawerItem(item),
+      ],
+    );
   }
 }
 
@@ -287,104 +278,6 @@ class AppBarActions extends StatelessWidget {
           },
         ),
       ],
-    );
-  }
-}
-
-class SmallTalkAboutHorses extends StatefulWidget {
-  SmallTalkAboutHorses({Key? key}) : super(key: key);
-
-  @override
-  _SmallTalkAboutHorsesState createState() => _SmallTalkAboutHorsesState();
-}
-
-class _SmallTalkAboutHorsesState extends State<SmallTalkAboutHorses> {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        children: <Widget>[
-          Expanded(
-            child: Text(''),
-          ),
-          HorseButton1(),
-          Container(
-            height: 40,
-            child: Text(''),
-          ),
-          HorseButton2(),
-          Expanded(
-            child: Text(''),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class HorseButton1 extends StatefulWidget {
-  HorseButton1({Key? key}) : super(key: key);
-
-  @override
-  _HorseButton1State createState() => _HorseButton1State();
-}
-
-class _HorseButton1State extends State<HorseButton1> {
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20)),
-      child: const Text('Нажми меня'),
-      onPressed: () => showDialog<String>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text('Вопрос к тебе есть'),
-          content: Text('Ты конь?'),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Да'),
-              onPressed: () => Navigator.pop(context, 'Да'),
-            ),
-            TextButton(
-              child: Text('Осуждаю'),
-              onPressed: () => Navigator.pop(context, 'Осуждаю'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class HorseButton2 extends StatefulWidget {
-  HorseButton2({Key? key}) : super(key: key);
-
-  @override
-  _HorseButton2State createState() => _HorseButton2State();
-}
-
-class _HorseButton2State extends State<HorseButton2> {
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20)),
-      child: const Text('И меня тоже'),
-      onPressed: () => showDialog<String>(
-        context: context,
-        builder: (BuildContext context) => SimpleDialog(
-          title: const Text('Ты всё ещё конь?'),
-          children: <Widget>[
-            TextButton(
-              child: Text('Всё ещё конь'),
-              onPressed: () => Navigator.pop(context, 'Всё ещё конь'),
-            ),
-            TextButton(
-              child: Text('Всё ещё осуждаю'),
-              onPressed: () => Navigator.pop(context, 'Всё ещё осуждаю'),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
