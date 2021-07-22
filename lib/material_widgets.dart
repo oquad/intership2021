@@ -80,22 +80,25 @@ class _MaterialWidgetScreenState extends State<MaterialWidgetScreen> {
 
   var _darkThemeUsing = true;
 
-  final List<Function> _pageOptions = <Function>[
-    smallTalkAboutHorses,
-    dataTableExample,
-    cardsExample,
-    tapBarExample,
-    checkboxExample,
-    dateTimePickerExapmle,
-    defaultBody,
-    radioExample,
-    sliderSwitchExample,
-  ];
+  
 
   int _selectedIndex = 6;
 
   @override
   Widget build(BuildContext context) {
+    
+    final List<Widget> pageOptions = <Widget>[
+      smallTalkAboutHorses(context),
+      dataTableExample(context),
+      cardsExample(context),
+      tapBarExample(context),
+      checkboxExample(context),
+      dateTimePickerExapmle(context),
+      defaultBody(context),
+      RadioWidget(),
+      sliderSwitchExample(context),
+    ];
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -257,7 +260,7 @@ class _MaterialWidgetScreenState extends State<MaterialWidgetScreen> {
         tooltip: 'Саня',
       ),
       body: Center(
-        child: _pageOptions.elementAt(_selectedIndex)(context),
+        child: pageOptions.elementAt(_selectedIndex),
       ),
     );
   }
@@ -386,22 +389,27 @@ class _RadioWidgetState extends State<RadioWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        for (var i = 0; i < dayTranslation.length; i++)
-          ListTile(
-            title: Text(dayTranslation[i]),
-            leading: Radio<RadioOptions>(
-              value: RadioOptions.values[i],
-              groupValue: _day,
-              onChanged: (RadioOptions? value) {
-                setState(() {
-                  _day = value;
-                });
-              },
+    return Container(
+      width: 200,
+      height: 500,
+      child: Column(
+        children: <Widget>[
+          for (var i = 0; i < dayTranslation.length; i++)
+            ListTile(
+              title: Text(dayTranslation[i]),
+              visualDensity: VisualDensity.compact,
+              leading: Radio<RadioOptions>(
+                value: RadioOptions.values[i],
+                groupValue: _day,
+                onChanged: (RadioOptions? value) {
+                  setState(() {
+                    _day = value;
+                  });
+                },
+              ),
             ),
-          ),
-      ],
+        ],
+      )
     );
   }
 }
